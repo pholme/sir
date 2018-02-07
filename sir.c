@@ -32,7 +32,7 @@ void infect () {
 					g.heap[++g.nheap] = you;
 					n[you].heap = g.nheap;
 				}
-				up_heap(n[you].heap); // this works bcoz there the only heap relationship that can be violated is the one between you and its parent
+				up_heap(n[you].heap); // this works bcoz the only heap relationship that can be violated is the one between you and its parent
 			}
 		}
 	}
