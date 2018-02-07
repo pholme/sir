@@ -39,7 +39,7 @@ void infect () {
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// this routine runs one SIR outbreak from a random staring node
+// this routine runs one SIR outbreak from a random seed node
 
 void sir () {
 	unsigned int i, me, source;
