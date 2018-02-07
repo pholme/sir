@@ -1,7 +1,5 @@
 # sir
-Pretty quick code for regular (continuous time, Markovian) SIR on networks
-
-This is code for the susceptible-infected-recovered (SIR) model on simple graphs.
+Pretty quick code for regular (continuous time, Markovian) SIR on simple graphs. I chatty intro to it here: https://petterhol.me/2018/02/07/fastest-network-sir-code-in-the-east/
 
 To get it running you need:
 
