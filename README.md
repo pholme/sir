@@ -6,8 +6,9 @@ This is code for the susceptible-infected-recovered (SIR) model on simple graphs
 To get it running you need:
 
 1. The Mersenne Twister from here http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/SFMT/ in a parallel directory
-2. Compile it by make (it has some generic optimization flags now)
-3. Run it like
+2. Make dictionaries o (for complier object files) and .rngstate (for RNG state files)
+3. Compile it by make (it has some generic optimization flags now)
+4. Run it like
 
 ./sir nwk/iceland.lnk .rngstate/0 1.5
 
