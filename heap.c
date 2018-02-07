@@ -10,7 +10,7 @@ extern NODE *n;
 extern GLOBALS g;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// performing down_heap (a.k.a. percolate down, a.k.a. min-heapify)
+// performing down_heap (a.k.a. percolate down)
 // it restores the heap property if there is an inconsistency between 'here'
 // and its children (and no other inconsistencies)
 
@@ -50,7 +50,7 @@ void del_root () {
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// performing up_heap (a.k.a. percolate down, a.k.a. min-heapify)
+// performing up_heap (a.k.a. percolate up)
 // for adding an element to the heap
 
 void up_heap (unsigned int start) {
