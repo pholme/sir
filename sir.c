@@ -123,7 +123,7 @@ int main (int argc, char *argv[]) {
 	sfmt_fill_array32(&g.sfmt, g.rnd, NRND);
 	g.r = g.rnd;
 
-	g.cutoff = (4294967296 / g.n) * g.n; // to get the epidemic seeds with equal probability
+	g.cutoff = (4294967295 / g.n) * g.n; // to get the epidemic seeds with equal probability
 	// read state or initialize RNG, stop  - - - - - - - - - - - - - - - - - - - - - - - -
 
 	// allocating the heap (N + 1) because it's indices are 1,...,N
