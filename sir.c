@@ -55,8 +55,7 @@ void sir () {
 	}
 
 	// get & infect the source
-	RND_CHK(1);
-	source = *(g.r++) % g.n;
+	source = randint();
 	n[source].time = 0.0;
 	n[source].heap = 1;
 	g.heap[g.nheap = 1] = source;
