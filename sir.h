@@ -10,6 +10,9 @@
 #include <unistd.h>
 #include <limits.h>
 #include <stdint.h>
+#ifdef TIME
+#include <time.h>
+#endif
 
 #define NAVG 100000 // number of runs for averages
 
