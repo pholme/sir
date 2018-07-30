@@ -68,7 +68,7 @@ void sir () {
 
 int main (int argc, char *argv[]) {
 	unsigned int i;
-	double t1 = 0.0, t2 = 0.0, s1 = 0.0, s2 = 0.0; // for averages
+	double st1 = 0.0, st2 = 0.0, ss1 = 0.0, ss2 = 0.0; // for averages
 	FILE *fp;
 #ifdef TIME
 	struct timespec t0, t1;
@@ -109,10 +109,10 @@ int main (int argc, char *argv[]) {
 	for (i = 0; i < NAVG; i++) {
 		sir();
 		// saving stats for averages
-		s1 += (double) g.s;
-		s2 += SQ((double) g.s);
-		t1 += g.t;
-		t2 += SQ(g.t);
+		ss1 += (double) g.s;
+		ss2 += SQ((double) g.s);
+		st1 += g.t;
+		st2 += SQ(g.t);
 	}
 
 #ifdef TIME
@@ -120,14 +120,14 @@ int main (int argc, char *argv[]) {
 #endif
 
 	// make averages
-	s1 /= NAVG;
-	s2 /= NAVG;
-	t1 /= NAVG;
-	t2 /= NAVG;
+	ss1 /= NAVG;
+	ss2 /= NAVG;
+	st1 /= NAVG;
+	st2 /= NAVG;
 
 	// print result
-	printf("avg. outbreak size: %g (%g)\n", s1, sqrt((s2 - SQ(s1)) / (NAVG - 1)));
-	printf("avg. time to extinction: %g (%g)\n", t1, sqrt((t2 - SQ(t1)) / (NAVG - 1)));
+	printf("avg. outbreak size: %g (%g)\n", ss1, sqrt((ss2 - SQ(ss1)) / (NAVG - 1)));
+	printf("avg. time to extinction: %g (%g)\n", st1, sqrt((st2 - SQ(st1)) / (NAVG - 1)));
 #ifdef TIME
 	printf("\ntime per outbreak (s): %g\n", ((t1.tv_sec - t0.tv_sec) + 1.0e-9 * (t1.tv_nsec - t0.tv_nsec)) / NAVG);
 #endif
