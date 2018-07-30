@@ -70,6 +70,9 @@ int main (int argc, char *argv[]) {
 	unsigned int i;
 	double t1 = 0.0, t2 = 0.0, s1 = 0.0, s2 = 0.0; // for averages
 	FILE *fp;
+#ifdef TIME
+	struct timespec t0, t1;
+#endif
 	
 	// just a help message
 	if ((argc < 3) || (argc > 4)) {
@@ -97,7 +100,11 @@ int main (int argc, char *argv[]) {
 
 	for (i = 0; i < 0x10000; i++)
 		g.rexp[i] = -log((pcg_32_bounded(0xffff) + 1) / (double) 0x10000) / g.beta;
-	
+
+#ifdef TIME
+	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t0);
+#endif
+
 	// run the simulations and summing for averages
 	for (i = 0; i < NAVG; i++) {
 		sir();
@@ -108,6 +115,10 @@ int main (int argc, char *argv[]) {
 		t2 += SQ(g.t);
 	}
 
+#ifdef TIME
+	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t1);
+#endif
+
 	// make averages
 	s1 /= NAVG;
 	s2 /= NAVG;
@@ -117,6 +128,9 @@ int main (int argc, char *argv[]) {
 	// print result
 	printf("avg. outbreak size: %g (%g)\n", s1, sqrt((s2 - SQ(s1)) / (NAVG - 1)));
 	printf("avg. time to extinction: %g (%g)\n", t1, sqrt((t2 - SQ(t1)) / (NAVG - 1)));
+#ifdef TIME
+	printf("\ntime per outbreak (s): %g\n", ((t1.tv_sec - t0.tv_sec) + 1.0e-9 * (t1.tv_nsec - t0.tv_nsec)) / NAVG);
+#endif
 
 	// cleaning up
 	for (i = 0; i < g.n; i++) free(n[i].nb);
