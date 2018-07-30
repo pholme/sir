@@ -11,21 +11,21 @@ NODE *n;
 
 void infect () {
 	unsigned int i, you, me = g.heap[1];
-	double t, now = n[me].time;
+	float t, now = n[me].time;
 
-	n[me].state = INFECTED;
-
-	n[me].time += exptime(1.0);
-	down_heap(1); // this will re-heapify because only the root and it's children can violate the heap property
+	del_root();
+	n[me].heap = I_OR_R;
+	// get the recovery time
+	n[me].time += g.rexp[pcg_16()] * g.beta; // bcoz g.rexpr has a / g.beta factor
+	if (n[me].time > g.t) g.t = n[me].time;
+	g.s++;
 
 	// go through the neighbors of the infected node . .
 	for (i = 0; i < n[me].deg; i++) {
 		you = n[me].nb[i];
-		if (S(you)) { // if you is S, you can be infected
-			t = now + exptime(g.beta); // get the infection time
-			// if the infection time is before when me gets infected,
-			// and (if it was already listed for infection) before the
-			// previously listed infection event, then list it
+		if (n[you].heap != I_OR_R) { // if you is S, you can be infected
+			t = now + g.rexp[pcg_16()]; // get the infection time
+
 			if ((t < n[me].time) && (t < n[you].time)) {
 				n[you].time = t;
 				if (n[you].heap == NONE) { // if not listed before, then extend the heap
@@ -42,37 +42,25 @@ void infect () {
 // this routine runs one SIR outbreak from a random seed node
 
 void sir () {
-	unsigned int i, me, source;
+	unsigned int i, source;
 	
 	g.t = 0.0;
 	g.s = 0;
 	
 	// initialize
 	for (i = 0; i < g.n; i++) {
-		n[i].state = SUSCEPTIBLE;
 		n[i].heap = NONE;
 		n[i].time = DBL_MAX; // to a large value
 	}
 
 	// get & infect the source
-	source = randint();
+	source = pcg_32_bounded(g.n);
 	n[source].time = 0.0;
 	n[source].heap = 1;
 	g.heap[g.nheap = 1] = source;
 
 	// run the outbreak
-	while (g.nheap) {
-		// get the node involved in the next event
-		me = g.heap[1];
-		if (I(me)) { // is it a recovery event?
-			n[me].state = RECOVERED;
-			g.t = n[me].time; // to get the extinction time
-			del_root();
-		} else { // . . or an infection? (note that me cannot be R)
-			infect();
-			g.s++; // to get the outbreak size
-		}
-	}
+	while (g.nheap) infect();
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -84,13 +72,16 @@ int main (int argc, char *argv[]) {
 	FILE *fp;
 	
 	// just a help message
-	if (argc != 4) {
-		fprintf(stderr, "usage: sir [nwk file] [r.n.g. state file] [beta]\n");
+	if ((argc < 3) || (argc > 4)) {
+		fprintf(stderr, "usage: ./sir [nwk file] [beta] <seed>\n");
 		return 1;
 	}
+
+	if (argc == 4) g.state = (uint64_t) strtoull(argv[3], NULL, 10);
+	else pcg_init();
 	
 	// initialize parameters
-	g.beta = atof(argv[3]);
+	g.beta = atof(argv[2]);
 	 
 	// read network data file
 	fp = fopen(argv[1], "r");
@@ -101,32 +92,11 @@ int main (int argc, char *argv[]) {
 	read_data(fp);
 	fclose(fp);
 
-	// read state or initialize RNG, start - - - - - - - - - - - - - - - - - - - - - - - -
-	if (sfmt_get_min_array_size32(&g.sfmt) > NRND) {
-		fprintf(stderr, "can't initialize the r.n.g.\n");
-		return 1;
-	}
-	
-	// an array for random numbers (slightly faster than generating them one by one)
-	g.rnd = malloc(NRND * sizeof(uint32_t));
-	
-	// check if I can read the RNG state from a file
-	fp = fopen(argv[2], "rb");
-	if (fp) {
-		if (1 != fread(&g.sfmt, sizeof(sfmt_t), 1, fp)) {
-			fclose(fp);
-			init_rng(); // if reading fails, then re-initialize it
-		}
-		fclose(fp);
-	} else init_rng(); // initialize from the clock
-	sfmt_fill_array32(&g.sfmt, g.rnd, NRND);
-	g.r = g.rnd;
-
-	g.cutoff = (4294967295 / g.n) * g.n; // to get the epidemic seeds with equal probability
-	// read state or initialize RNG, stop  - - - - - - - - - - - - - - - - - - - - - - - -
-
 	// allocating the heap (N + 1) because it's indices are 1,...,N
 	g.heap = malloc((g.n + 1) * sizeof(unsigned int));
+
+	for (i = 0; i < 0x10000; i++)
+		g.rexp[i] = -log((pcg_32_bounded(0xffff) + 1) / (double) 0x10000) / g.beta;
 	
 	// run the simulations and summing for averages
 	for (i = 0; i < NAVG; i++) {
@@ -148,14 +118,9 @@ int main (int argc, char *argv[]) {
 	printf("avg. outbreak size: %g (%g)\n", s1, sqrt((s2 - SQ(s1)) / (NAVG - 1)));
 	printf("avg. time to extinction: %g (%g)\n", t1, sqrt((t2 - SQ(t1)) / (NAVG - 1)));
 
-	// save the state of the random number generator
-	fp = fopen(argv[2], "wb");
-	fwrite(&g.sfmt, sizeof(sfmt_t), 1, fp);
-	fclose(fp);
-	
 	// cleaning up
 	for (i = 0; i < g.n; i++) free(n[i].nb);
-	free(g.rnd); free(n); free(g.heap);
+	free(n); free(g.heap);
 	 
 	return 0;
 }
