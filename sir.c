@@ -99,7 +99,7 @@ int main (int argc, char *argv[]) {
 	g.heap = malloc((g.n + 1) * sizeof(unsigned int));
 
 	for (i = 0; i < 0x10000; i++)
-		g.rexp[i] = -log((i + 1) / (double) 0x10000) / g.beta;
+		g.rexp[i] = -log((i + 1.0) / 0x10000) / g.beta;
 
 #ifdef TIME
 	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t0);
