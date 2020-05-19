@@ -33,7 +33,6 @@ typedef struct GLOBALS {
 	float t;
 	// FOR RNG
 	uint64_t state;
-	uint32_t rmem;
 	float rexp[0x10000];
 } GLOBALS;
 
