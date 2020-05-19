@@ -70,21 +70,16 @@ int main (int argc, char *argv[]) {
 	unsigned int i;
 	double st1 = 0.0, st2 = 0.0, ss1 = 0.0, ss2 = 0.0; // for averages
 	FILE *fp;
-#ifdef TIME
-	struct timespec t0, t1;
-#endif
 	
 	// just a help message
-	if ((argc < 3) || (argc > 4)) {
-		fprintf(stderr, "usage: ./sir [nwk file] [beta] <seed>\n");
+	if (argc != 4) {
+		fprintf(stderr, "usage: ./sir [nwk file] [beta] [seed]\n");
 		return 1;
 	}
 
-	if (argc == 4) g.state = (uint64_t) strtoull(argv[3], NULL, 10);
-	else pcg_init();
-	
-	// initialize parameters
+	// read stuff
 	g.beta = atof(argv[2]);
+	g.state = (uint64_t) strtoull(argv[3], NULL, 10);
 	 
 	// read network data file
 	fp = fopen(argv[1], "r");
@@ -101,10 +96,6 @@ int main (int argc, char *argv[]) {
 	for (i = 0; i < 0x10000; i++)
 		g.rexp[i] = -log((i + 1.0) / 0x10000) / g.beta;
 
-#ifdef TIME
-	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t0);
-#endif
-
 	// run the simulations and summing for averages
 	for (i = 0; i < NAVG; i++) {
 		sir();
@@ -115,10 +106,6 @@ int main (int argc, char *argv[]) {
 		st2 += SQ(g.t);
 	}
 
-#ifdef TIME
-	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t1);
-#endif
-
 	// make averages
 	ss1 /= NAVG;
 	ss2 /= NAVG;
@@ -128,9 +115,6 @@ int main (int argc, char *argv[]) {
 	// print result
 	printf("avg. outbreak size: %g (%g)\n", ss1, sqrt((ss2 - SQ(ss1)) / (NAVG - 1)));
 	printf("avg. time to extinction: %g (%g)\n", st1, sqrt((st2 - SQ(st1)) / (NAVG - 1)));
-#ifdef TIME
-	printf("\ntime per outbreak (s): %g\n", ((t1.tv_sec - t0.tv_sec) + 1.0e-9 * (t1.tv_nsec - t0.tv_nsec)) / NAVG);
-#endif
 
 	// cleaning up
 	for (i = 0; i < g.n; i++) free(n[i].nb);
