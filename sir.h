@@ -10,9 +10,6 @@
 #include <unistd.h>
 #include <limits.h>
 #include <stdint.h>
-#ifdef TIME
-#include <time.h>
-#endif
 
 #define NAVG 100000 // number of runs for averages
 
@@ -58,6 +55,5 @@ extern void read_data (FILE *);
 extern uint16_t pcg_16 ();
 extern uint32_t pcg_32 ();
 extern uint32_t pcg_32_bounded ();
-extern void pcg_init ();
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
