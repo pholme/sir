@@ -53,6 +53,6 @@ extern void read_data (FILE *);
 // pcg_rnd.c
 extern uint16_t pcg_16 ();
 extern uint32_t pcg_32 ();
-extern uint32_t pcg_32_bounded ();
+extern uint32_t pcg_32_bounded (uint32_t);
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
