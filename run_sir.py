@@ -15,7 +15,7 @@ if __name__ == "__main__":
 		exit()
 
 	## Print header
-	print('beta','outbreaksize','outbreaksizeerr','extinctiontime','extinctiontime')
+	print('beta','outbreaksize','outbreaksizeerr','extinctiontime','extinctiontimeerr')
 
 	for i in range(-3,4):
 		out = check_output(['./sir',argv[1],str(2**i),str(getrandbits(64))])
