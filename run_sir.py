@@ -14,6 +14,9 @@ if __name__ == "__main__":
 		print('usage: python3 run_sir.py [nwk file]')
 		exit()
 
+	## Print header
+	print('beta','outbreaksize','outbreaksizeerr','extinctiontime','extinctiontime')
+
 	for i in range(-3,4):
 		out = check_output(['./sir',argv[1],str(2**i),str(getrandbits(64))])
 		a = out.decode().split('\n')
