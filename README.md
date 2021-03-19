@@ -3,7 +3,7 @@ Pretty quick code for regular (continuous time, Markovian) SIR on simple graphs.
 
 To get it running you need:
 
-1. Make dictionary o (for complier object files)
+1. Make directory `./o/` (for complier object files)
 2. Compile it by make (it has some generic optimization flags now)
 3. Run it like
 
