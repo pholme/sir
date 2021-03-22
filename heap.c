@@ -19,24 +19,27 @@ void down_heap (unsigned int here) {
 	unsigned int left = here << 1; // = here * 2 (I know this is silly and saves no time)
 	unsigned int right = left | 1; // = left + 1
 
-	// if the heap property is violated vs the children, find the smallest child 
-	if ((left <= g.nheap) && (n[g.heap[left]].time < n[g.heap[smallest]].time))
-		smallest = left;
-	if ((right <= g.nheap) && (n[g.heap[right]].time < n[g.heap[smallest]].time))
-		smallest = right;
+	while (left <= g.nheap) {
+	  smallest = left;
+	  if ((right <= g.nheap) && (n[g.heap[right]].time < n[g.heap[smallest]].time)) {
+	    smallest = right;
+	  }
 
-	if (smallest == here) return;
+	  if (n[g.heap[smallest]].time <= n[g.heap[here]].time) return;
 
-	// swap smallest and here
-	utmp = g.heap[smallest];
-	g.heap[smallest] = g.heap[here];
-	g.heap[here] = utmp;
+	  // swap smallest and here
+	  utmp = g.heap[smallest];
+	  g.heap[smallest] = g.heap[here];
+	  g.heap[here] = utmp;
 
-	n[g.heap[smallest]].heap = smallest;
-	n[g.heap[here]].heap = here;
+	  n[g.heap[smallest]].heap = smallest;
+	  n[g.heap[here]].heap = here;
 
-	// continue checking below
-	down_heap(smallest);
+	  // reset initial variables for next iteration
+	  here = smallest;
+	  left = here << 1;
+	  right = left | 1;
+	}
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
